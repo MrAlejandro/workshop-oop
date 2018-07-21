@@ -4,7 +4,7 @@ namespace App\Readers;
 
 use App\SchemaManager;
 
-class RssReader
+class FeedReader
 {
     protected $source;
     protected $reader;

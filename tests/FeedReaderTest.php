@@ -3,10 +3,10 @@
 use PHPUnit\Framework\TestCase;
 use App\SchemaManager;
 use App\Enum\SourceTypes;
-use App\Readers\RssReader;
+use App\Readers\FeedReader;
 use App\Readers\ReaderFactory;
 
-class RssReaderTest extends TestCase
+class FeedReaderTest extends TestCase
 {
     public function setUp()
     {
@@ -22,7 +22,7 @@ class RssReaderTest extends TestCase
     {
         $reader_factory = new ReaderFactory();
         $schema_manager = new SchemaManager();
-        $rss_reader = new RssReader($source, $schema_manager, $reader_factory);
+        $rss_reader = new FeedReader($source, $schema_manager, $reader_factory);
         $this->assertEquals($expected, $this->invokeMethod($rss_reader, 'detectSource'));
     }
 

@@ -6,14 +6,18 @@ class ReaderFactory
 {
     public function getReader($source_type, $source)
     {
-        $type = ucfirst($source_type);
-        $class_name = "Reader{$type}";
-        $path = implode(DIRECTORY_SEPARATOR, [DIR_ROOT, 'src', 'Readers', "{$class_name}.php"]);
+        if (!$source_type) {
+            throw new \RuntimeException('Invalid source type provided');
+        }
 
-        if (file_exists($path)) {
-            require_once($path);
-            $full_class_name = "\\App\\Readers\\{$class_name}";
-            return new $full_class_name($source);
+        $type = ucfirst($source_type);
+        $class_name = "\\App\\Readers\\Reader{$type}";//"Reader{$type}";
+//        $path = implode(DIRECTORY_SEPARATOR, [DIR_ROOT, 'src', 'Readers', "{$class_name}.php"]);
+
+        if (class_exists($class_name)) {
+//            require_once($path);
+//            $full_class_name = "\\App\\Readers\\{$class_name}";
+            return new $class_name($source);
         }
 
         throw new \RuntimeException('Cannot find reader');

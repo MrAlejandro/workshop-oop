@@ -4,7 +4,7 @@ namespace App;
 
 use XMLReader;
 
-class RssParser
+class FeedParser
 {
     protected $reader;
     protected $contents;
@@ -89,7 +89,7 @@ class RssParser
 
         foreach ($this->current_path as $key) {
             $path_length--;
-            if (!array_key_exists($key, $current_element)) {
+            if (!array_key_exists($key, (array) $current_element)) {
                 $current_element[$key] = array();
             }
 

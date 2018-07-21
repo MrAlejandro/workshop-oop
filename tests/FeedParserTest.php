@@ -1,16 +1,18 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use App\RssParser;
+use App\FeedParser;
 
-class RssParserTest extends TestCase
+class FeedParserTest extends TestCase
 {
 
     /**
      * @dataProvider contentsProvider
      */
-    public function testToArray()
+    public function testToArray($feed_contents, $expected)
     {
+        $feed_parser = new FeedParser($feed_contents);
+        $this->assertEquals($expected, $feed_parser->toArray());
     }
 
     public function contentsProvider()
