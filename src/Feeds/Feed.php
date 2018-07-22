@@ -1,24 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Feeds;
 
-class FeedGenerator
+abstract class Feed
 {
-    protected $format;
-    protected $schema_manager;
-    protected $contents;
-    protected $fields_mapping;
-
-    public function __construct($format, SchemaManager $schema_manager)
-    {
-        $this->format = $format;
-        $this->schema_manager = $schema_manager;
-    }
+    protected $root_namespace = '';
+    protected $fields_mapping = [];
 
     public function toXml($contents)
     {
-        $this->fields_mapping = $this->schema_manager->get($this->format);
-
         if (empty($this->fields_mapping)) {
             throw new \RuntimeException('Cannot generate xml');
         }
@@ -28,7 +18,7 @@ class FeedGenerator
             sprintf('<?xml version="1.0" encoding="utf-8"?><%s></%s>', $root_node, $root_node)
         );
 
-        $this->addAttributes($xml, $this->fields_mapping['root_namespace']);
+        $this->addAttributes($xml, $this->root_namespace);
         $xml = $this->build($xml, reset($contents));
 
         $doc = new \DomDocument('1.0');

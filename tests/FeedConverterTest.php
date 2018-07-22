@@ -18,21 +18,23 @@ class FeedConverterTest extends TestCase
     /**
      * @dataProvider converterDataProvider
      */
-    public function testConvert($command_parts, $expected)
+    public function testConvert($source, $params, $expected)
     {
-        $this->assertEquals(trim($expected, "\n"), trim($this->feed_converter->convert($command_parts), "\n"));
+        $this->assertEquals(
+            trim($expected, "\n"),
+            trim(
+                $this->feed_converter->convert($source, $params),
+                "\n"
+            )
+        );
     }
 
     public function converterDataProvider()
     {
         return [
             [
-                [ // command_parts
-                    'script_name.php',
-                    '--format',
-                    'rss',
-                    implode(DIRECTORY_SEPARATOR, [__DIR__, 'atom.xml']),
-                ],
+                implode(DIRECTORY_SEPARATOR, [__DIR__, 'fixtures', 'atom.xml']),
+                ['format' => 'rss'],
                 $this->getExpectedResult(), // expected result
             ],
         ];
@@ -121,7 +123,6 @@ class FeedConverterTest extends TestCase
   </channel>
 </rss>
 XML;
-
     }
 }
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Parsers;
 
 use XMLReader;
 
-class FeedParser
+class XmlToArrayParser
 {
     protected $reader;
     protected $contents;
@@ -15,17 +15,15 @@ class FeedParser
     const VALS = 'values';
     const ATTS = 'attributes';
 
-    public function __construct($contents)
+    public function __construct()
     {
         $this->reader = new XMLReader();
-        $this->contents = $contents;
     }
 
-    public function toArray()
+    public function parse($contents)
     {
-        if ($this->parsed_array) {
-            return $this->parsed_array;
-        }
+        $this->contents = $contents;
+        $this->parsed_array = array();
 
         $this->reader->xml($this->contents);
         $level = 0;

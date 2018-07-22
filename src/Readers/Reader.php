@@ -2,14 +2,7 @@
 
 namespace App\Readers;
 
-abstract class Reader
+interface Reader
 {
-    protected $source;
-
-    public function __construct($source)
-    {
-        $this->source = $source;
-    }
-
-    abstract public function read();
+    public function read($source);
 }
