@@ -4,28 +4,46 @@ namespace App;
 
 use App\Readers\FeedReader;
 use App\Readers\ReaderFactory;
+use App\Parsers\XmlToArrayParser;
+use App\Feeds\FeedFactory;
+use App\Enum\SourceTypes;
 
 class FeedConverter
 {
-    public function convert($params)
+    public function convert($source, $params)
     {
-        $command = new FeedCommand($params);
+        $source_type = $this->detectSource($source);
 
         try {
-            list($params, $source) = $command->getParsedCommand();
+            if (!$source_type) {
+                throw new \RuntimeException('Cannot detect source');
+            }
+
             $rss_reader = new FeedReader(
-                $source,
-                new SchemaManager(),
-                new ReaderFactory()
+                ReaderFactory::getReader($source_type)
             );
+            $raw_feed = $rss_reader->getContents($source);
 
-            $raw_feed = $rss_reader->getContents();
-            $parser = new FeedParser($raw_feed);
+            $parser = new XmlToArrayParser();
+            $feed = FeedFactory::getFeed($params['format']);
 
-            $feed_generator = new FeedGenerator($params['format'], new SchemaManager());
-            return $feed_generator->toXml($parser->toArray());
+            return $feed->toXml(
+                $parser->parse($raw_feed)
+            );
         } catch (\RuntimeException $e) {
             return $e->getMessage() . PHP_EOL;
         }
+    }
+
+    protected function detectSource($source)
+    {
+        if (file_exists($source)) {
+            return SourceTypes::FILE;
+
+        } elseif (filter_var($source, FILTER_VALIDATE_URL) !== false) {
+            return SourceTypes::URL;
+        }
+
+        return false;
     }
 }

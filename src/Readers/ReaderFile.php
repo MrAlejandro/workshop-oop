@@ -2,12 +2,12 @@
 
 namespace App\Readers;
 
-class ReaderFile extends Reader
+class ReaderFile implements Reader
 {
-    public function read()
+    public function read($source)
     {
-        if (file_exists($this->source)) {
-            return file_get_contents($this->source);
+        if (file_exists($source)) {
+            return file_get_contents($source);
         }
 
         return '';

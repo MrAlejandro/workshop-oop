@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
 
-require_once(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'src', 'bootstrap.php']));
-echo (new App\FeedConverter())->convert($argv);
+require_once(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'vendor', 'autoload.php']));
+[$source, $params] = (new App\Tools\CliCommandParser())->getParsedCommand($argv);
+echo (new App\FeedConverter())->convert($source, $params);

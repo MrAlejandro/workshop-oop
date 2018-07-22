@@ -1,26 +1,19 @@
 <?php
 
-namespace App;
+namespace App\Tools;
 
-class FeedCommand
+class CliCommandParser
 {
     protected $params;
     protected $source;
-    protected $command_parts;
 
-    public function __construct($command_parts)
-    {
-        $this->command_parts = $command_parts;
-    }
-
-    public function getParsedCommand()
+    public function getParsedCommand($command_parts)
     {
         if (isset($this->params) && isset($this->source)) {
-            return [$this->params, $this->source];
+            return [$this->source, $this->params];
         }
 
         $last_flag = null;
-        $command_parts = $this->command_parts;
 
         $this->source = array_pop($command_parts);
         unset($command_parts[0]);
@@ -41,6 +34,6 @@ class FeedCommand
             }
         }
 
-        return [$this->params, $this->source];
+        return [$this->source, $this->params];
     }
 }
