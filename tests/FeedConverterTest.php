@@ -15,14 +15,11 @@ class FeedConverterTest extends TestCase
     /**
      * @dataProvider converterDataProvider
      */
-    public function testConvert($source, $params, $expected)
+    public function testConvert($source, $params, $expected_file)
     {
-        $this->assertEquals(
-            trim($expected, "\n"),
-            trim(
-                $this->feed_converter->convert($source, $params),
-                "\n"
-            )
+        $this->assertXmlStringEqualsXmlFile(
+            $expected_file,
+            $this->feed_converter->convert($source, $params)
         );
     }
 
@@ -32,7 +29,7 @@ class FeedConverterTest extends TestCase
             [
                 implode(DIRECTORY_SEPARATOR, [__DIR__, 'fixtures', 'atom.xml']),
                 ['format' => 'rss'],
-                file_get_contents(implode(DIRECTORY_SEPARATOR, [__DIR__, 'fixtures', 'expected_result.xml'])), // expected result
+                implode(DIRECTORY_SEPARATOR, [__DIR__, 'fixtures', 'expected_result.xml']), // expected result
             ],
         ];
     }
