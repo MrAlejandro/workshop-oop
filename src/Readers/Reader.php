@@ -4,5 +4,5 @@ namespace App\Readers;
 
 interface Reader
 {
-    public function read($source);
+    public function getContent($source);
 }

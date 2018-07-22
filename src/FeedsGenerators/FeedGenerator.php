@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Feeds;
+namespace App\FeedsGenerators;
 
-abstract class Feed
+abstract class FeedGenerator
 {
     protected $root_namespace = '';
     protected $fields_mapping = [];

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Feeds;
+namespace App\FeedsGenerators;
 
-class Rss extends Feed
+class RssGenerator extends FeedGenerator
 {
     protected $root_namespace = ['version' => '2.0'];
     protected $fields_mapping = [

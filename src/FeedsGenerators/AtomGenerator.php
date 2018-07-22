@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Feeds;
+namespace App\FeedsGenerators;
 
-class Atom
+class AtomGenerator extends FeedGenerator
 {
-    protected $root_namespace = ['xmlns' => 'http://www.w3.org/2005/Atom'];
+    protected $root_namespace = ['xmlns' => 'http://www.w3.org/2005/AtomGenerator'];
     protected $fields_mapping = [
         'guid'           => 'id',
         'pubDate'        => 'published',

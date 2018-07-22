@@ -7,8 +7,14 @@ use App\Tools\Http;
 
 class ReaderFactory
 {
-    public static function getReader($source_type)
+    public static function getReader($source)
     {
+        $source_type = self::detectSource($source);
+
+        if (!$source_type) {
+            throw new \RuntimeException('Cannot detect source');
+        }
+
         $type = ucfirst($source_type);
         $class_name = "\\App\\Readers\\Reader{$type}";
 
@@ -25,4 +31,15 @@ class ReaderFactory
         throw new \RuntimeException('Cannot find reader');
     }
 
+    public static function detectSource($source)
+    {
+        if (file_exists($source)) {
+            return SourceTypes::FILE;
+
+        } elseif (filter_var($source, FILTER_VALIDATE_URL) !== false) {
+            return SourceTypes::URL;
+        }
+
+        return false;
+    }
 }

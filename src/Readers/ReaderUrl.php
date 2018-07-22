@@ -8,12 +8,11 @@ class ReaderUrl implements Reader
 {
     protected $http;
 
-    public function __construct($source) {
-        // FIXME: inject App\Tools\Http somehow
-        $this->http = new Http();
+    public function __construct(Http $http) {
+        $this->http = $http;
     }
 
-    public function read($source)
+    public function getContent($source)
     {
         return $this->http->get($source);
     }
