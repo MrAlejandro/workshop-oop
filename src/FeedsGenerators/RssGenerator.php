@@ -4,6 +4,7 @@ namespace App\FeedsGenerators;
 
 class RssGenerator extends FeedGenerator
 {
+    protected $root_node = 'rss';
     protected $root_namespace = ['version' => '2.0'];
     protected $fields_mapping = [
         'id'        => 'guid',
@@ -13,5 +14,6 @@ class RssGenerator extends FeedGenerator
         'author'    => 'managingEditor',
         'right'     => 'copyright',
         'logo'      => 'image',
+        'test'      => false,
     ];
 }

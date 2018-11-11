@@ -2,74 +2,52 @@
 
 namespace App\FeedsGenerators;
 
+use LSS\Array2XML;
+
 abstract class FeedGenerator
 {
     protected $root_namespace = '';
     protected $fields_mapping = [];
 
-    public function toXml($contents)
+    public function toXml($feed_content)
     {
-        if (empty($this->fields_mapping)) {
-            throw new \RuntimeException('Cannot generate xml');
-        }
+        $feed_content = $this->prepareNodes($feed_content);
+        $feed_content = $this->prepare($feed_content);
 
-        $root_node = key($contents);
-        $xml = new \SimpleXMLElement(
-            sprintf('<?xml version="1.0" encoding="utf-8"?><%s></%s>', $root_node, $root_node)
-        );
-
-        $this->addAttributes($xml, $this->root_namespace);
-        $xml = $this->build($xml, reset($contents));
+        $feed_xml = Array2XML::createXML($feed_content);
 
         $doc = new \DomDocument('1.0');
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput = true;
-        $doc->loadXML($xml->asXML());
+        $doc->loadXML($feed_xml);
 
         return $doc->saveXML();
     }
 
-    protected function addAttributes(&$node, $attributes)
+    protected function prepare($feed_content)
     {
-        foreach ($attributes as $name => $value) {
-            $data = [
-                'name' => $name,
-                'value' => $value,
-            ];
-
-            if (strpos($name, ':') !== false) {
-                list($namespace, $name) = explode(':', $name);
-                $data['name'] = $name;
-                $data['namespace'] = $namespace;
-            }
-
-            @call_user_func_array([$node, 'addAttribute'], $data);
-        }
+        return $feed_content;
     }
 
-    protected function build(&$xml, $contents, $parent_name = null)
+    protected function prepareNodes($feed_content)
     {
-        foreach ($contents as $name => $data) {
-            $name = isset($this->fields_mapping[$name]) ? $this->fields_mapping[$name] : $name;
-            $name = is_numeric($name) && !is_null($parent_name) ? $parent_name : $name;
-
-            if ($name === false) {
+        foreach ($feed_content as $name => $children) {
+            if (array_key_exists($name, $this->fields_mapping)
+                && $this->fields_mapping[$name] === null
+            ) {
+                unset($feed_content[$name]);
                 continue;
+
+            } elseif (is_array($children)) {
+                $feed_content[$name] = $this->prepareNodes($children);
             }
 
-            if ($name == 'attributes') {
-                $this->addAttributes($xml, $data);
-            } elseif (isset($data['values'])) {
-                $this->build($xml, $data['values'], $name);
-            } elseif (!isset($data['value'])) {
-                $child = $xml->addChild($name);
-                $this->build($child, $data);
-            } else {
-                $child = $xml->addChild($name, $data['value']);
-                $this->addAttributes($child, $data['attributes']);
+            if (isset($this->fields_mapping[$name])) {
+                $feed_content[$this->fields_mapping[$name]] = $children;
+                unset($feed_content[$name]);
             }
         }
 
-        return $xml;
+        return $feed_content;
     }
 }

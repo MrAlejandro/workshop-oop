@@ -3,8 +3,11 @@
 namespace App;
 
 use App\FeedsGenerators\FeedGeneratorFactory;
-use App\Readers\ReaderFactory;
 use App\Parsers\XmlToArrayParser;
+use Spatie\ArrayToXml\ArrayToXml;
+use App\Modifiers\FeedModifier;
+use App\Readers\ReaderFactory;
+use App\Parsers\ParserFactory;
 
 class FeedConverter
 {
@@ -17,9 +20,14 @@ class FeedConverter
             $parser = new XmlToArrayParser();
             $parsed_feed = $parser->parse($raw_feed);
 
-            $feed = FeedGeneratorFactory::getFeedGenerator($params['format']);
+            $feed_modifier = new FeedModifier($params);
+            $modified_feed = $feed_modifier->modify($parsed_feed);
 
-            return $feed->toXml($parsed_feed);
+            $format = isset($params['format']) ? $params['format'] : 'rss';
+            $feed = FeedGeneratorFactory::getFeedGenerator($format);
+
+            $modified_feed = $parsed_feed;
+            return $feed->toXml($modified_feed);
         } catch (\RuntimeException $e) {
             return $e->getMessage() . PHP_EOL;
         }

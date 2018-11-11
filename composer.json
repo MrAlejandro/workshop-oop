@@ -8,6 +8,9 @@
         }
     },
     "require": {
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "spatie/array-to-xml": "^2.7",
+        "nesbot/carbon": "^1.32",
+        "openlss/lib-array2xml": "^0.5.1"
     }
 }
